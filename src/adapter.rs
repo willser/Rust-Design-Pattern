@@ -9,15 +9,15 @@ impl DbConnect {
         Some(String::from("sql result"))
     }
 
-    fn insert(&self, sql: &str) -> Result<String> {
+    fn insert(&self, _sql: &str) -> Result<String> {
         Ok(String::from("insert success"))
     }
 
-    fn update(&self, sql: &str) -> Result<i32> {
+    fn update(&self, _sql: &str) -> Result<i32> {
         Ok(1)
     }
 
-    fn delete(&self, sql: &str) -> Result<i32> {
+    fn delete(&self, _sql: &str) -> Result<i32> {
         Ok(1)
     }
 }
