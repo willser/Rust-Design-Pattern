@@ -1,4 +1,4 @@
-use std::io::Error;
+use std::iter::FromIterator;
 
 trait Criteria<T> {
     fn filter(&self, vec: &Vec<T>) -> Vec<T>;
@@ -13,6 +13,25 @@ struct Node {
 impl Node {
     fn new(string: &str, int: i32) -> Self {
         Node { string: String::from(string), int }
+    }
+}
+
+
+impl<'a> FromIterator<&'a Node> for Vec<Node> {
+    fn from_iter<I: IntoIterator<Item=&'a Node>>(iter: I) -> Vec<Node> {
+        let mut map = iter.into_iter().map(|x| -> Node{
+            let x: &Node = x;
+            Node { string: x.string.clone(), int: x.int }
+        });
+        let mut vec = Vec::new();
+        loop {
+            if let Some(option) = map.next(){
+                vec.push(option);
+            }else{
+                break;
+            }
+        }
+        vec
     }
 }
 
@@ -32,7 +51,7 @@ impl StringCriteria {
 
 impl Criteria<Node> for StringCriteria {
     fn filter(&self, vec: &Vec<Node>) -> Vec<Node> {
-        vec.iter().filter(|x| x.string != "").map(|x| Node::new(&x.string, x.int)).collect::<Vec<Node>>()
+        vec.iter().filter(|x| x.string != "").collect::<Vec<Node>>()
     }
 }
 
@@ -46,7 +65,7 @@ impl IntCriteria {
 
 impl Criteria<Node> for IntCriteria {
     fn filter(&self, vec: &Vec<Node>) -> Vec<Node> {
-        vec.iter().filter(|x| x.int != 0).map(|x| Node::new(&x.string, x.int)).collect::<Vec<Node>>()
+        vec.iter().filter(|x| x.int != 0).collect::<Vec<Node>>()
     }
 }
 
@@ -68,7 +87,7 @@ impl Criteria<Node> for AndCriteria {
     fn filter(&self, vec: &Vec<Node>) -> Vec<Node> {
         let vec_1 = self.criteria.filter(vec);
         let vec_2 = self.criteria_other.filter(vec);
-        vec_1.iter().filter(|x| vec_2.contains(x)).map(|x| Node::new(&x.string, x.int)).collect::<Vec<Node>>()
+        vec_1.iter().filter(|x| vec_2.contains(x)).collect::<Vec<Node>>()
     }
 }
 
