@@ -1,20 +1,18 @@
 use std::io::{Error, ErrorKind};
-// #[macro_use]
-use crate::error_contains;
 
 struct File {
     file_type: FileType,
     subdirectory: Vec<File>,
 }
 
-#[derive(Copy,Clone,PartialEq,Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 enum FileType {
     FOLDER,
     FILE,
 }
 
 impl File {
-    fn new(path: &str) -> Self {
+    fn new(_path: &str) -> Self {
         File {
             file_type: FileType::FOLDER,
             subdirectory: vec![],
@@ -35,6 +33,17 @@ impl File {
     fn file_type(&self) -> FileType {
         self.file_type
     }
+
+    fn get_subdirectory(&self) -> Result<&Vec<File>, Error> {
+        match self.file_type {
+            FileType::FOLDER => {
+                Ok(&self.subdirectory)
+            }
+            FileType::FILE => {
+                Err(Error::new(ErrorKind::Other, String::from("error")))
+            }
+        }
+    }
 }
 
 
@@ -43,11 +52,12 @@ fn test() {
     let file = File::new("");
 
     let x = file.file_type();
-
-    assert_eq!(x,FileType::FOLDER);
-
     let string = file.read_string();
+    let result = file.get_subdirectory();
 
-    error_contains!(string,"error")
+    assert_eq!(x, FileType::FOLDER);
 
+    error_contains!(string,"error");
+
+    ok!(result,(|v:&Vec<File>| assert_eq!(v.len(),0)));
 }

@@ -9,6 +9,18 @@ macro_rules! check {
 }
 
 #[macro_export]
+macro_rules! ok {
+    ($e:expr,$closure:tt) => {
+        match $e {
+            Ok(t) => {
+                $closure(t)
+            },
+            Err(e) => panic!("{} failed with: {}", stringify!($e), e),
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! error {
     ($e:expr, $s:expr) => {
         match $e {
