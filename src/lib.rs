@@ -8,3 +8,4 @@ mod adapter;
 mod bridge;
 mod filter;
 mod composite;
+mod decorator;
